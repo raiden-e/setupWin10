@@ -1,0 +1,39 @@
+<Configuration>
+    <Add OfficeClientEdition="64" Channel="Monthly">
+        <Product ID="O365ProPlusRetail">
+            <Language ID="en-us"/>
+            <Language ID="de-de"/>
+            <!-- <ExcludeApp ID="Word"/> -->
+            <!-- <ExcludeApp ID="Excel"/> -->
+            <!-- <ExcludeApp ID="PowerPoint"/> -->
+            <ExcludeApp ID="Access"/>
+            <!-- <ExcludeApp ID="OneNote"/> -->
+
+            <ExcludeApp ID="Groove"/>
+            <ExcludeApp ID="Lync"/>
+            <ExcludeApp ID="OneDrive"/>
+            <ExcludeApp ID="Outlook"/>
+            <ExcludeApp ID="Publisher"/>
+            <ExcludeApp ID="Teams"/>
+        </Product>
+        <!-- <Product ID="VisioProRetail">
+            <Language ID="en-us" />
+        </Product> -->
+        <!-- <Product ID="ProjectProRetail" MSICondition="PrjStd,PrjStdR">
+         <Language ID="en-us" />
+      </Product> -->
+        <!-- <Product ID="AccessRuntimeRetail" MSICondition="PrjStd,PrjStdR">
+         <Language ID="en-us" />
+      </Product> -->
+        <!-- <Product ID="LanguagePack" MSICondition="PrjStd,PrjStdR">
+         <Language ID="en-us" />
+      </Product> -->
+    </Add>
+
+    <!-- In case you want to have different behaviour, (un)comment these -->
+    <!-- or visit https://docs.microsoft.com/en-us/deployoffice/office-deployment-tool-configuration-options -->
+    <Updates Enabled="TRUE" Channel="Monthly" />
+    <Display Level="Full" AcceptEULA="TRUE" />
+    <!-- <Display Level="None" AcceptEULA="TRUE" />  -->
+    <!--  <Property Name="AUTOACTIVATE" Value="1" />  -->
+</Configuration>
