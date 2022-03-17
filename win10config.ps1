@@ -26,6 +26,7 @@
 $tweaks = @(
     'RequireAdmin',
     'CreateRestorePoint',
+    'RemoveCameraRoll',
 
     'Set-Vendor',
     #'Set-SpotifyCache',
@@ -2668,6 +2669,18 @@ function Set-Vendor {
         New-ItemProperty -Path $item -Name 'Manufacturer' -Value $Manufacturer
     }
     Rename-Computer -NewName $Model
+}
+function Remove-CameraRoll {
+    #Requires -RunAsAdministrator
+    [CmdletBinding()]
+    param ()
+    $item = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{2B20DF75-1EDA-4039-8097-38798227D5B7}\PropertyBag'
+    if (Get-ItemProperty $item) {
+        Set-ItemProperty -Path $item -Name 'ThisPCPolicy' -Value "Hide"
+    }
+    else {
+        New-ItemProperty -Path $item -Name 'ThisPCPolicy' -Value "Hide"
+    }
 }
 function Set-SpotifyCache {
     [CmdletBinding()]
