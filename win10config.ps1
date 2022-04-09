@@ -27,9 +27,11 @@ $tweaks = @(
     'RequireAdmin',
     'CreateRestorePoint',
     'RemoveCameraRoll',
+    'Remove-PowerShellISE',
 
     'Set-Vendor',
     #'Set-SpotifyCache',
+    'Remove-VSContext',
 
     ### Chris Titus Tech Additions
     # "TitusRegistryTweaks",
@@ -55,9 +57,9 @@ $tweaks = @(
     # "DisableBackgroundApps",      # "EnableBackgroundApps",
     # "DisableLocationTracking",    # "EnableLocationTracking",
     'DisableMapUpdates', # "EnableMapUpdates",
-    "DisableFeedback",            # "EnableFeedback",
+    "DisableFeedback", # "EnableFeedback",
     "DisableTailoredExperiences", # "EnableTailoredExperiences",
-    "DisableAdvertisingID",       # "EnableAdvertisingID",
+    "DisableAdvertisingID", # "EnableAdvertisingID",
     'DisableCortana', # "EnableCortana",
     # "DisableErrorReporting",      # "EnableErrorReporting",
     # "SetP2PUpdateLocal",          # "SetP2PUpdateInternet",
@@ -65,7 +67,7 @@ $tweaks = @(
     # "DisableWAPPush",             # "EnableWAPPush",
 
     ### Security Tweaks ###
-    "SetUACLow",                  # "SetUACHigh",
+    "SetUACLow", # "SetUACHigh",
     # "EnableSharingMappedDrives",  # "DisableSharingMappedDrives",
     # "DisableAdminShares",         # "EnableAdminShares",
     # "DisableSMB1",                # "EnableSMB1",
@@ -133,7 +135,7 @@ $tweaks = @(
 
     ### Explorer UI Tweaks ###
     'ShowKnownExtensions', # "HideKnownExtensions",
-    'ShowHiddenFiles',              # "HideHiddenFiles",
+    'ShowHiddenFiles', # "HideHiddenFiles",
     # "HideSyncNotifications"       # "ShowSyncNotifications",
     # "HideRecentShortcuts",        # "ShowRecentShortcuts",
     'SetExplorerThisPC', # "SetExplorerQuickAccess",
@@ -800,8 +802,7 @@ function DisableDefender {
     Set-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender' -Name 'DisableAntiSpyware' -Type DWord -Value 1
     if ([System.Environment]::OSVersion.Version.Build -eq 14393) {
         Remove-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run' -Name 'WindowsDefender' -ErrorAction SilentlyContinue
-    }
-    Elseif ([System.Environment]::OSVersion.Version.Build -ge 15063) {
+    } Elseif ([System.Environment]::OSVersion.Version.Build -ge 15063) {
         Remove-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run' -Name 'SecurityHealth' -ErrorAction SilentlyContinue
     }
 }
@@ -812,8 +813,7 @@ function EnableDefender {
     Remove-ItemProperty -Path 'HKLM:\SOFTWARE\Policies\Microsoft\Windows Defender' -Name 'DisableAntiSpyware' -ErrorAction SilentlyContinue
     if ([System.Environment]::OSVersion.Version.Build -eq 14393) {
         Set-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run' -Name 'WindowsDefender' -Type ExpandString -Value "`"%ProgramFiles%\Windows Defender\MSASCuiL.exe`""
-    }
-    Elseif ([System.Environment]::OSVersion.Version.Build -ge 15063) {
+    } Elseif ([System.Environment]::OSVersion.Version.Build -ge 15063) {
         Set-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run' -Name 'SecurityHealth' -Type ExpandString -Value "`"%ProgramFiles%\Windows Defender\MSASCuiL.exe`""
     }
 }
@@ -2273,8 +2273,7 @@ function InstallHyperV {
     Write-Output 'Installing Hyper-V...'
     if ((Get-WmiObject -Class 'Win32_OperatingSystem').Caption -like '*Server*') {
         Install-WindowsFeature -Name 'Hyper-V' -IncludeManagementTools -WarningAction SilentlyContinue | Out-Null
-    }
-    Else {
+    } Else {
         Enable-WindowsOptionalFeature -Online -FeatureName 'Microsoft-Hyper-V-All' -NoRestart -WarningAction SilentlyContinue | Out-Null
     }
 }
@@ -2284,8 +2283,7 @@ function UninstallHyperV {
     Write-Output 'Uninstalling Hyper-V...'
     if ((Get-WmiObject -Class 'Win32_OperatingSystem').Caption -like '*Server*') {
         Uninstall-WindowsFeature -Name 'Hyper-V' -IncludeManagementTools -WarningAction SilentlyContinue | Out-Null
-    }
-    Else {
+    } Else {
         Disable-WindowsOptionalFeature -Online -FeatureName 'Microsoft-Hyper-V-All' -NoRestart -WarningAction SilentlyContinue | Out-Null
     }
 }
@@ -2488,8 +2486,7 @@ function UnpinStartMenuTiles {
             $data = $data.Substring(0, $data.IndexOf(',0,202,30') + 9) + ',0,202,80,0,0'
             Set-ItemProperty -Path "$($_.PsPath)\Current" -Name 'Data' -Type Binary -Value $data.Split(',')
         }
-    }
-    Elseif ([System.Environment]::OSVersion.Version.Build -eq 17133) {
+    } Elseif ([System.Environment]::OSVersion.Version.Build -eq 17133) {
         $key = Get-ChildItem -Path 'HKCU:\SOFTWARE\Microsoft\Windows\CurrentVersion\CloudStore\Store\Cache\DefaultAccount' -Recurse | Where-Object { $_ -like "*start.tilegrid`$windows.data.curatedtilecollection.tilecollection\Current" }
         $data = (Get-ItemProperty -Path $key.PSPath -Name 'Data').Data[0..25] + ([byte[]](202, 50, 0, 226, 44, 1, 1, 0, 0))
         Set-ItemProperty -Path $key.PSPath -Name 'Data' -Type Binary -Value $data
@@ -2663,8 +2660,7 @@ function Set-Vendor {
     if (Get-ItemProperty $item) {
         Set-ItemProperty -Path $item -Name 'Model' -Value $Model
         Set-ItemProperty -Path $item -Name 'Manufacturer' -Value $Manufacturer
-    }
-    else {
+    } else {
         New-ItemProperty -Path $item -Name 'Model' -Value $Model
         New-ItemProperty -Path $item -Name 'Manufacturer' -Value $Manufacturer
     }
@@ -2677,8 +2673,7 @@ function Remove-CameraRoll {
     $item = 'HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\FolderDescriptions\{2B20DF75-1EDA-4039-8097-38798227D5B7}\PropertyBag'
     if (Get-ItemProperty $item) {
         Set-ItemProperty -Path $item -Name 'ThisPCPolicy' -Value "Hide"
-    }
-    else {
+    } else {
         New-ItemProperty -Path $item -Name 'ThisPCPolicy' -Value "Hide"
     }
 }
@@ -2691,6 +2686,23 @@ function Set-SpotifyCache {
     $storage | Out-File -FilePath $path -Append -Force -Verbose
 }
 
+
+function Remove-PowerShellISE {
+    [CmdletBinding()]
+    param ()
+    DISM /Online /Remove-Capability /CapabilityName:Microsoft.Windows.PowerShell.ISE~~~~0.0.1.0
+}
+
+function Remove-VSContext {
+    [CmdletBinding()]
+    param ()
+    if (!(Test-Path "HKCR:\Directory\Background\shell\AnyCode\Extended")) {
+        New-ItemProperty -Path "HKCR:\Directory\Background\shell\AnyCode\Extended" -Name Extended -PropertyType String -Force -ErrorAction SilentlyContinue
+    }
+    if (!(Test-Path "HKCR:\Directory\shell\AnyCode\Extended")) {
+        New-ItemProperty -Path "HKCR:\Directory\shell\AnyCode\Extended" -Name Extended -PropertyType String -Force -ErrorAction SilentlyContinue
+    }
+}
 ##########
 # Parse parameters and apply tweaks
 ##########
